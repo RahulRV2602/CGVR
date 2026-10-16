@@ -1,0 +1,62 @@
+
+from OpenGL.GL import *
+from OpenGL.GLU import *
+from OpenGL.GLUT import *
+import sys
+
+def init():
+    glClearColor(0.0, 0.0, 0.0, 1.0)
+    glEnable(GL_DEPTH_TEST)
+    glEnable(GL_LIGHTING)
+    glEnable(GL_LIGHT0)
+
+    # Ambient, diffuse and specular light
+    glLightfv(GL_LIGHT0, GL_AMBIENT, [0.2, 0.2, 0.2, 1.0])
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, [0.8, 0.8, 0.8, 1.0])
+    glLightfv(GL_LIGHT0, GL_SPECULAR, [1.0, 1.0, 1.0, 1.0])
+    glLightfv(GL_LIGHT0, GL_POSITION, [3.0, 3.0, 5.0, 1.0])
+
+    # Material properties
+    glMaterialfv(GL_FRONT, GL_AMBIENT, [0.2, 0.0, 0.0, 1.0])
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, [0.8, 0.1, 0.1, 1.0])
+    glMaterialfv(GL_FRONT, GL_SPECULAR, [1.0, 1.0, 1.0, 1.0])
+    glMaterialf(GL_FRONT, GL_SHININESS, 50.0)
+
+    glShadeModel(GL_SMOOTH)
+
+def display():
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    glLoadIdentity()
+
+    gluLookAt(0, 0, 5,
+              0, 0, 0,
+              0, 1, 0)
+
+    # Draw a 3D sphere
+    glutSolidSphere(1.0, 50, 50)
+
+    glutSwapBuffers()
+
+def reshape(width, height):
+    if height == 0:
+        height = 1
+
+    glViewport(0, 0, width, height)
+    glMatrixMode(GL_PROJECTION)
+    glLoadIdentity()
+    gluPerspective(45.0, width / height, 1.0, 100.0)
+    glMatrixMode(GL_MODELVIEW)
+
+def main():
+    glutInit(sys.argv)
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
+    glutInitWindowSize(600, 600)
+    glutCreateWindow(b"Phong Illumination Model")
+
+    init()
+    glutDisplayFunc(display)
+    glutReshapeFunc(reshape)
+    glutMainLoop()
+
+if __name__ == "__main__":
+    main()
