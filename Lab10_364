@@ -1,0 +1,112 @@
+
+from OpenGL.GL import *
+from OpenGL.GLU import *
+from OpenGL.GLUT import *
+import sys
+
+angle = 0.0
+
+def init():
+    glClearColor(0.1, 0.1, 0.1, 1.0)
+    glEnable(GL_DEPTH_TEST)
+
+def draw_cube():
+    glBegin(GL_QUADS)
+
+    # Front face - Red
+    glColor3f(1, 0, 0)
+    glVertex3f(-1, -1,  1)
+    glVertex3f( 1, -1,  1)
+    glVertex3f( 1,  1,  1)
+    glVertex3f(-1,  1,  1)
+
+    # Back face - Green
+    glColor3f(0, 1, 0)
+    glVertex3f(-1, -1, -1)
+    glVertex3f(-1,  1, -1)
+    glVertex3f( 1,  1, -1)
+    glVertex3f( 1, -1, -1)
+
+    # Top face - Blue
+    glColor3f(0, 0, 1)
+    glVertex3f(-1, 1, -1)
+    glVertex3f(-1, 1,  1)
+    glVertex3f( 1, 1,  1)
+    glVertex3f( 1, 1, -1)
+
+    # Bottom face - Yellow
+    glColor3f(1, 1, 0)
+    glVertex3f(-1, -1, -1)
+    glVertex3f( 1, -1, -1)
+    glVertex3f( 1, -1,  1)
+    glVertex3f(-1, -1,  1)
+
+    # Right face - Cyan
+    glColor3f(0, 1, 1)
+    glVertex3f(1, -1, -1)
+    glVertex3f(1,  1, -1)
+    glVertex3f(1,  1,  1)
+    glVertex3f(1, -1,  1)
+
+    # Left face - Magenta
+    glColor3f(1, 0, 1)
+    glVertex3f(-1, -1, -1)
+    glVertex3f(-1, -1,  1)
+    glVertex3f(-1,  1,  1)
+    glVertex3f(-1,  1, -1)
+
+    glEnd()
+
+def display():
+    global angle
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
+    # Viewing transformation
+    glMatrixMode(GL_MODELVIEW)
+    glLoadIdentity()
+    gluLookAt(4, 3, 6, 0, 0, 0, 0, 1, 0)
+
+    # Rotate the 3D object
+    glRotatef(angle, 0, 1, 0)
+
+    draw_cube()
+    glutSwapBuffers()
+
+def reshape(width, height):
+    if height == 0:
+        height = 1
+
+    # Viewport mapping
+    glViewport(0, 0, width, height)
+
+    # Projection transformation
+    glMatrixMode(GL_PROJECTION)
+    glLoadIdentity()
+    gluPerspective(45, width / height, 0.1, 100)
+
+    glMatrixMode(GL_MODELVIEW)
+
+def update(value):
+    global angle
+    angle += 1
+    if angle >= 360:
+        angle = 0
+
+    glutPostRedisplay()
+    glutTimerFunc(16, update, 0)
+
+def main():
+    glutInit(sys.argv)
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
+    glutInitWindowSize(800, 600)
+    glutCreateWindow(b"3D Viewing Pipeline")
+
+    init()
+    glutDisplayFunc(display)
+    glutReshapeFunc(reshape)
+    glutTimerFunc(0, update, 0)
+    glutMainLoop()
+
+if __name__ == "__main__":
+    main()
